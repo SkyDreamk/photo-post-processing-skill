@@ -51,6 +51,9 @@
 - 野生动物纪实自然光
 - 旅行人像｜自然纪实电影感
 - 美食商业摄影｜真实食物质感
+- 人物特写｜伦勃朗硬光低饱和纪实
+- 复古电影｜自然光胶片体积感
+- 侘寂深灰｜低曝光暖色克制纪实
 
 后续新增风格统一采用：`适用场景 → 核心视觉 → 执行逻辑 → 禁止事项`。
 
@@ -67,7 +70,10 @@ photo-post-processing-skill/
 │   ├── city_street_dodge_burn.md
 │   ├── wildlife_documentary.md
 │   ├── travel_portrait_documentary.md
-│   └── food_commercial.md
+│   ├── food_commercial.md
+│   ├── portrait_rembrandt_documentary.md
+│   ├── retro_film_volume_documentary.md
+│   └── wabi_sabi_deep_gray.md
 └── docs/
     ├── style-selection.md
     └── negative-prompts.md
