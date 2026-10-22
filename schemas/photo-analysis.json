@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "photo-analysis.json",
+  "title": "Photo Analysis Profile",
+  "description": "Structured analysis of a real photograph, used as the basis for downstream style scoring and technique matching.",
+  "type": "object",
+  "properties": {
+    "color": {
+      "type": "object",
+      "description": "Color analysis: warmth, saturation, dominant colors, skin tone, and color cast.",
+      "properties": {
+        "color_cast": {
+          "type": "string",
+          "description": "White balance color cast, as a short description; use \"neutral\" when no cast is present.",
+          "default": "neutral"
+        },
+        "dominant_colors": {
+          "type": "array",
+          "description": "Dominant colors or color environments, for example \"green dominant environment\".",
+          "items": {
+            "type": "string",
+            "description": "A single dominant color or color environment."
+          }
+        },
+        "saturation": {
+          "type": "number",
+          "description": "Overall color saturation, from desaturated (0) to highly saturated (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "skin_tone": {
+          "type": "string",
+          "description": "Skin tone rendering, as a short description such as \"warm\"; use \"not_applicable\" when no skin is present."
+        },
+        "warmth": {
+          "type": "number",
+          "description": "Overall color temperature, from cool (0) to warm (1).",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "warmth",
+        "saturation",
+        "dominant_colors",
+        "skin_tone",
+        "color_cast"
+      ]
+    },
+    "composition": {
+      "type": "object",
+      "description": "Composition analysis: frame orientation, aspect ratio, shot scale, subject position, perspective, and horizon.",
+      "properties": {
+        "aspect_ratio": {
+          "type": "string",
+          "description": "Frame aspect ratio, for example \"3:2\" or \"16:9\"."
+        },
+        "horizon": {
+          "type": "string",
+          "description": "Horizon placement and levelness, for example \"upper third, level\"."
+        },
+        "orientation": {
+          "type": "string",
+          "description": "Frame orientation; one of vertical, horizontal, or square.",
+          "enum": [
+            "vertical",
+            "horizontal",
+            "square"
+          ]
+        },
+        "perspective": {
+          "type": "string",
+          "description": "Perspective character of the shot, for example \"wide-angle\" or \"telephoto compression\"."
+        },
+        "shot_scale": {
+          "type": "string",
+          "description": "Shot scale of the main subject, for example \"medium close-up\"."
+        },
+        "subject_position": {
+          "type": "string",
+          "description": "Position of the main subject within the frame, for example \"center-left\"."
+        }
+      },
+      "required": [
+        "shot_scale",
+        "subject_position",
+        "orientation"
+      ]
+    },
+    "depth": {
+      "type": "object",
+      "description": "Depth analysis: original depth of field as captured, and the relative weight of the foreground, midground, and background layers.",
+      "properties": {
+        "background": {
+          "type": "number",
+          "description": "Relative visual weight and separation of the background layer, from minimal (0) to dominant (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Qualitative depth-of-field description, for example \"shallow-medium\"."
+        },
+        "dof": {
+          "type": "number",
+          "description": "Depth of field (dof), from very shallow (0) to deep (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "foreground": {
+          "type": "number",
+          "description": "Relative visual weight and separation of the foreground layer, from minimal (0) to dominant (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "midground": {
+          "type": "number",
+          "description": "Relative visual weight and separation of the midground layer, from minimal (0) to dominant (1).",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "dof",
+        "description"
+      ]
+    },
+    "image_condition": {
+      "type": "object",
+      "description": "Technical image condition: exposure, dynamic range, noise, detail, local contrast, and white balance confidence. White balance/color cast and saturation are recorded in color; original depth of field is recorded in depth.",
+      "properties": {
+        "detail": {
+          "type": "number",
+          "description": "Fine detail and sharpness, from soft or lacking detail (0) to highly detailed (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "dynamic_range": {
+          "type": "number",
+          "description": "Usable tonal dynamic range retained in the image, from very limited (0) to wide (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "exposure": {
+          "type": "string",
+          "description": "Exposure assessment, for example \"underexposed\", \"slightly underexposed\", \"correct\", \"slightly overexposed\", or \"overexposed\"."
+        },
+        "local_contrast": {
+          "type": "number",
+          "description": "Local (micro) contrast, from flat (0) to strong (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "noise": {
+          "type": "number",
+          "description": "Noise level, from clean (0) to heavily noisy (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "white_balance_confidence": {
+          "type": "number",
+          "description": "Confidence that the white balance/color cast assessment recorded in color.color_cast is correct, from no confidence (0) to full confidence (1).",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "exposure",
+        "dynamic_range",
+        "noise",
+        "detail"
+      ]
+    },
+    "light": {
+      "type": "object",
+      "description": "Lighting analysis: direction, type, quality, contrast, character, shadows, ambient level, backlight and side light flags, analysis confidence, and whether light sculpting is permitted.",
+      "properties": {
+        "ambient_level": {
+          "type": "number",
+          "description": "Overall ambient brightness of the environment, from dark (0) to bright (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "backlight": {
+          "type": "boolean",
+          "description": "Whether the key light is predominantly behind the subject (backlight present)."
+        },
+        "character": {
+          "type": "string",
+          "description": "Qualitative character of the light, for example \"warm natural daylight\"."
+        },
+        "confidence": {
+          "type": "number",
+          "description": "Confidence in the lighting analysis, from no confidence (0) to full confidence (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "contrast": {
+          "type": "number",
+          "description": "Lighting contrast between highlights and shadows, from low (0) to high (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "direction": {
+          "type": "string",
+          "description": "Direction of the key light relative to the subject; one of left_side, right_side, front, back, top, mixed, or unknown.",
+          "enum": [
+            "left_side",
+            "right_side",
+            "front",
+            "back",
+            "top",
+            "mixed",
+            "unknown"
+          ]
+        },
+        "hardness": {
+          "type": "number",
+          "description": "Light quality, from soft (0) to hard (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "light_sculpting_allowed": {
+          "type": "boolean",
+          "description": "Whether light-sculpting (relighting) techniques may be applied to this image."
+        },
+        "shadow_direction": {
+          "type": "string",
+          "description": "Direction in which shadows fall in the frame, as a short description."
+        },
+        "side_light": {
+          "type": "boolean",
+          "description": "Whether the key light is predominantly side light."
+        },
+        "type": {
+          "type": "string",
+          "description": "Lighting type; one of side, side_back, back, front, top, flat, or mixed.",
+          "enum": [
+            "side",
+            "side_back",
+            "back",
+            "front",
+            "top",
+            "flat",
+            "mixed"
+          ]
+        }
+      },
+      "required": [
+        "direction",
+        "type",
+        "hardness",
+        "contrast",
+        "character",
+        "shadow_direction",
+        "ambient_level",
+        "light_sculpting_allowed"
+      ]
+    },
+    "mood": {
+      "type": "array",
+      "description": "Mood descriptors of the image, for example \"quiet\", \"documentary\", or \"humanistic\"; at least one, without duplicates.",
+      "items": {
+        "type": "string",
+        "description": "A single mood descriptor."
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "post_processing_potential": {
+      "type": "number",
+      "description": "Estimated potential for improvement through post-processing, from none (0) to high (1).",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "quality": {
+      "type": "number",
+      "description": "Overall photographic quality, from poor (0) to excellent (1).",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "risks": {
+      "type": "array",
+      "description": "Regions or facts most at risk of being altered incorrectly in post-processing, for example faces, architecture, terrain, sky, reflections, or animal forms.",
+      "items": {
+        "type": "string",
+        "description": "A single at-risk region or fact."
+      }
+    },
+    "scene": {
+      "type": "string",
+      "description": "Scene description, for example \"outdoor forest\"."
+    },
+    "subject": {
+      "type": "object",
+      "description": "Subject analysis: main subject class and tags, classification confidence, subject weight versus environment weight, and their narrative relationship.",
+      "properties": {
+        "class": {
+          "type": "string",
+          "description": "Primary subject class used by the decision engine; one of the listed values, written exactly as given.",
+          "enum": [
+            "Landscape",
+            "Snow Landscape",
+            "Wildlife",
+            "Architecture",
+            "Urban",
+            "Documentary Humanistic",
+            "Travel Portrait",
+            "Close Portrait",
+            "Food",
+            "Still Life",
+            "Mixed Scene"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "description": "Confidence in the subject classification, from no confidence (0) to full confidence (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "environment_weight": {
+          "type": "number",
+          "description": "Visual and narrative weight of the surrounding environment in the frame, from negligible (0) to dominant (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "narrative": {
+          "type": "string",
+          "description": "Short description of the narrative relationship between the main subject and the environment."
+        },
+        "subject_weight": {
+          "type": "number",
+          "description": "Visual and narrative weight of the main subject in the frame, from negligible (0) to dominant (1).",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tags": {
+          "type": "array",
+          "description": "Fine-grained subject labels, for example \"portrait\", \"human\", or \"elderly\"; without duplicates.",
+          "items": {
+            "type": "string",
+            "description": "A single fine-grained subject label."
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "class",
+        "tags",
+        "subject_weight",
+        "environment_weight",
+        "narrative"
+      ]
+    },
+    "uncertainties": {
+      "type": "array",
+      "description": "Judgments that could not be confirmed from the image and must not be guessed.",
+      "items": {
+        "type": "string",
+        "description": "A single unconfirmed judgment."
+      }
+    }
+  },
+  "required": [
+    "subject",
+    "scene",
+    "composition",
+    "light",
+    "color",
+    "depth",
+    "mood",
+    "image_condition",
+    "quality",
+    "post_processing_potential"
+  ]
+}

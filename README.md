@@ -1,82 +1,34 @@
-# Intelligent Photo Post-Processing Skill
+# AI Intelligent Photo Post-Processing Skill
 
-内容感知型专业摄影后期 Skill。
+## 定位
 
-核心思想：**先理解照片，再选择风格。**
+本 Skill 是内容感知、规则驱动的智能摄影后期决策系统。它不套用固定滤镜，而是根据每张照片的分析结果决定后期方案。
 
-本仓库不是滤镜集合，也不是固定流水线。风格库只是候选方案。
+## 决策链
 
-## 工作流
+按以下顺序执行，任一环节不通过时按 QC 结论回退：
 
-`Analyze → Classify → Match → Decide Strength → Dodge & Burn → Grade → QC`
+1. **分析照片**：输出符合 `schemas/` 定义的标准化分析数据。
+2. **匹配风格**：从 `styles/` 中选出总分最高的候选风格。评分维度、权重、总分带和兜底规则以 SKILL.md 与 `engine/` 的口径为准，规则红线以 `rules/photography-rules.md` 为准。
+3. **匹配技术**：从 `techniques/` 中仅选取当前照片必需的技术。
+4. **判断兼容性**：校验所选风格与技术是否冲突。
+5. **控制强度**：按匹配总分带和兼容性结果确定执行强度。
+6. **执行**：按确定的风格、技术和强度处理照片。
+7. **QC**：校验输出质量。
+8. **回退**：QC 不通过时，降低强度或退回上一环节重新决策。
 
-### Analyze
-分析主体、环境、天气、季节、时间、光线、色彩、空间和叙事。
+## 目录结构
 
-### Classify
-判断自然风光、城市建筑、城市街拍、旅行人像、动物、美食等类型。
+| 目录 | 职责 |
+|---|---|
+| `rules/` | 摄影后期总规则。`rules/photography-rules.md` 是唯一总规则源，其他文件与其冲突时以它为准 |
+| `engine/` | 照片分析、风格匹配、技术匹配、兼容性判断、强度控制、QC |
+| `styles/` | 风格候选库 |
+| `techniques/` | 可复用的摄影技术（如 Dodge & Burn）。技术不属于风格，不得放入 `styles/` |
+| `schemas/` | 标准化分析数据结构 |
+| `docs/` | 决策记录与实施路线 |
 
-### Match
-从 `styles/` 中选择最匹配的风格。
+## 当前阶段约束
 
-### Decide Strength
-根据原图状态决定轻度、中度或强风格。
-
-### Dodge & Burn
-仅在有必要时调用局部明度塑光。
-
-### Grade
-执行色彩、曝光、对比度、细节、颗粒等调整。
-
-### QC
-检查结构、光线、色彩、材质、风格和 AI 痕迹。
-
-## 重要原则
-
-1. 风格不是必选项。
-2. 禁止硬套风格。
-3. 原图结构优先。
-4. 真实光线优先。
-5. 风格服务于照片内容。
-6. 原图优秀时只做轻度后期。
-7. 不适合任何风格时执行自然原生后期。
-8. 禁止凭空增加照片中不存在的元素。
-
-## 当前风格库
-
-- Canon LS 自然通透胶片
-- 高山雪景冷白空气感
-- 银翼杀手2049｜砂金硬光冷青底
-- 城市街拍｜高级局部明度塑光
-- 野生动物纪实自然光
-- 旅行人像｜自然纪实电影感
-- 美食商业摄影｜真实食物质感
-- 人物特写｜伦勃朗硬光低饱和纪实
-- 复古电影｜自然光胶片体积感
-- 侘寂深灰｜低曝光暖色克制纪实
-
-后续新增风格统一采用：`适用场景 → 核心视觉 → 执行逻辑 → 禁止事项`。
-
-## GitHub 使用
-
-```text
-photo-post-processing-skill/
-├── SKILL.md
-├── README.md
-├── styles/
-│   ├── canon_ls.md
-│   ├── snow_cold_air.md
-│   ├── blade_runner_2049.md
-│   ├── city_street_dodge_burn.md
-│   ├── wildlife_documentary.md
-│   ├── travel_portrait_documentary.md
-│   ├── food_commercial.md
-│   ├── portrait_rembrandt_documentary.md
-│   ├── retro_film_volume_documentary.md
-│   └── wabi_sabi_deep_gray.md
-└── docs/
-    ├── style-selection.md
-    └── negative-prompts.md
-```
-
-`SKILL.md` 为主入口，其余文件为风格和规则模块。
+- V2 决策链（风格匹配 → 技术匹配 → 兼容性 → 强度 → QC → 回退）完成验证前，不新增 `styles/` 条目。
+- V2 验证通过后，才进入 V3 闭环阶段。
